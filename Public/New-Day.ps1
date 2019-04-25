@@ -54,10 +54,14 @@ Function New-Day {
         $JournalPath = $currentPath.Path
     }
 
-    # Test if the Enries folder already exists in the journal, and creates if necessary
+    # Test if the folders already exists in the journal, and creates if necessary
     $entriesFolder = Test-Path -Path "$JournalPath\Entries"
     If(!$entriesFolder) {
         New-Item -Path $JournalPath -Name "Entries" -ItemType "directory"
+    }
+    $statsFolder = Test-Path -Path "$JournalPath\Stats"
+    If(!$statsFolder) {
+        New-Item -Path $JournalPath -Name "Stats" -ItemType "directory"
     }
 
     # Test if an entry already exists for the day requested
@@ -81,5 +85,10 @@ Function New-Day {
         }
         Set-Content @params
     }
+    $params = @{
+        Path = "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json"
+        Value = "TEST"
+    }
+    Set-Content @params
     
 }
