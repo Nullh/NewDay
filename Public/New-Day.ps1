@@ -104,5 +104,16 @@ Function New-Day {
         Value = $json
     }
     Set-Content @params
+
+    $entries = Get-ChildItem "$JournalPath\Entries\*.md"
     
+    # Make the index file
+    $params = @{
+        Path = "$JournalPath\README.md"
+        Value = @"
+# Journal Entries`n 
+ $(foreach($entry in $entries){Write-Output "* $($entry.Name)`n"})
+"@
+    }
+    Set-Content @params
 }

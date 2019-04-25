@@ -52,8 +52,13 @@ Describe "New-Day: File Creation" {
         "$($path.Path)\Entries\$date.md" | Should -Exist
     }
 
+    It "Should createa readme.md file in the current directory" {
+        "$($path.Path)\README.md" | Should -Exist
+    }
+
     Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
     Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+    Remove-Item -Force  ".\README.md" -ErrorAction silentlycontinue
 
     It "Should create a Stats file in /Stats/yyyy-MM-dd.json" {
         $path = Get-Location
@@ -65,6 +70,7 @@ Describe "New-Day: File Creation" {
 
     Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
     Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+    Remove-Item -Force  ".\README.md" -ErrorAction silentlycontinue
 
     It "Should create a file named yyyy-MM-dd-ThisIsATitle.md in the current directory" {
         $title = "This is a title"
@@ -80,6 +86,7 @@ Describe "New-Day: File Creation" {
 
     Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
     Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+    Remove-Item -Force  ".\README.md" -ErrorAction silentlycontinue
     New-Item -Path . -Name 'foo' -ItemType 'directory'
 
     It "Should create a file named yyyy-MM-dd.md in a specified directory" {

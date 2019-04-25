@@ -83,6 +83,6 @@ Function New-JournalEntry {
     }
 
     # Add the content to the entry
-    Add-Content -Path "$JournalPath\Entries\$($entries[0].Name)" -Value "$Content"
+    Add-Content -Path "$JournalPath\Entries\$($entries[0].Name)" -Value "`n$Content"
      
 }
