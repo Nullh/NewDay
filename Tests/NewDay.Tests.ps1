@@ -40,6 +40,7 @@ Describe "New-Day: Validation" {
     #}
 }
 Describe "New-Day: File Creation" {
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
     Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
     Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
 
@@ -154,4 +155,35 @@ Describe "New-JournalEntry: Validation" {
     It "Should accept a parameter JournalPath" {
         (Get-Command New-JournalEntry).Parameters['JournalPath'] | Should -Not -BeNullOrEmpty
     }
+}
+
+Describe "New-JournalEntry: Functional Tests" {
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
+    It "Should add content to an exisiting journal file" {
+        New-Day -Date "2010-01-01" -JournalPath ".\foo"
+        New-JournalEntry -Content "Ate some toast!" -JournalPath ".\foo" -Date "2010-01-01"
+        Get-Content ".\foo\Entries\2010-01-01.md" | Should -Contain "Ate some toast!"
+    }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
+    It "Should add content to an exisiting journal file with title" {
+        New-Day -Date "2010-01-01" -JournalPath ".\foo"
+        New-JournalEntry -Content "Ate some toast!" -JournalPath ".\foo" -Date "2010-01-01" -Title "toast time!"
+        Get-Content ".\foo\Entries\2010-01-01.md" | Should -Contain "Ate some toast!"
+        Get-Content ".\foo\Entries\2010-01-01.md" | Should -Contain "## Toast Time!"
+    }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
+    It "Should create a new entry file if one does not exist" {
+        New-JournalEntry -Content "Ate some toast!" -JournalPath ".\foo" -Date "2010-01-01"
+        Test-Path ".\foo\Entries\2010-01-01.md" | Should -Be $true
+    }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
 }
