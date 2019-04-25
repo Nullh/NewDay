@@ -97,4 +97,9 @@ Describe "New-Day: File Creation" {
         $firstLine | Should -Be "# $title"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
     }
+    It "Should not create a new file if one already exists" {
+        New-Day -Title "Test" -Date "2010-01-01"
+        {New-Day -Date "2010-01-01"} | Should -Throw "Entry already exists for that day. Use New-DayEntry to add an additional entry."
+        Remove-Item -Recurse -Force -Path ".\Entries" 
+    }
 }

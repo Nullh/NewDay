@@ -54,12 +54,19 @@ Function New-Day {
         $JournalPath = $currentPath.Path
     }
 
+    # Test if the Enries folder already exists in the journal, and creates if necessary
     $entriesFolder = Test-Path -Path "$JournalPath\Entries"
-
     If(!$entriesFolder) {
         New-Item -Path $JournalPath -Name "Entries" -ItemType "directory"
     }
 
+    # Test if an entry already exists for the day requested
+    $entry = Test-Path -Path "$JournalPath\Entries\$($Date.ToString("yyyy-MM-dd"))*.md"
+    If($entry) {
+        Throw "Entry already exists for that day. Use New-DayEntry to add an additional entry."
+    }
+
+    # Create the day's file
     If($Title) {
         $params = @{
             Path = "$JournalPath\Entries\$($Date.ToString("yyyy-MM-dd"))-$($Title.Replace(' ', '')).md"
