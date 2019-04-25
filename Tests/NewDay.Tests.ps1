@@ -187,3 +187,22 @@ Describe "New-JournalEntry: Functional Tests" {
 
     Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
 }
+
+Describe "Save-DailyStats: Validation" {
+    It "Should expose a function called Save-DailyStats" {
+        $test = Get-Command -Module NewDay
+        $test.Name | Should -Contain "Save-DailyStats"
+    }
+    It "Should accept a parameter Date" {
+        (Get-Command Save-DailyStats).Parameters['Date'] | Should -Not -BeNullOrEmpty
+    }
+    It "Should require parameter Mood" {
+        (Get-Command Save-DailyStats).Parameters['Mood'].Attributes.Mandatory | Should -Be $true
+    }
+    It "Should require parameter BodyMood" {
+        (Get-Command Save-DailyStats).Parameters['BodyMood'].Attributes.Mandatory | Should -Be $true
+    }
+    It "Should accept a parameter JournalPath" {
+        (Get-Command Save-DailyStats).Parameters['JournalPath'] | Should -Not -BeNullOrEmpty
+    }
+}
