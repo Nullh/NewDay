@@ -105,7 +105,7 @@ Function New-Day {
     }
     Set-Content @params
 
-    $entries = Get-ChildItem "$JournalPath\Entries\*.md"
+    $entries = Get-ChildItem "$JournalPath\Entries\*.md" | Sort-Object -Property Name -Descending
     
     # Make the index file
     $params = @{
