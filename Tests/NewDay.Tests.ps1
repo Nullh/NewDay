@@ -206,3 +206,17 @@ Describe "Save-DailyStats: Validation" {
         (Get-Command Save-DailyStats).Parameters['JournalPath'] | Should -Not -BeNullOrEmpty
     }
 }
+
+Describe "Save-DailyStats: Functional Testing" {
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
+    It "Should update an existing stats file" {
+        New-Day -Date "2010-01-01" -JournalPath ".\foo"
+        Save-DailyStats -Date "2010-01-01" -JournalPath ".\foo" -Mood 5 -BodyMood 9
+        $stats = Get-Content ".\foo\Stats\2010-01-01.json" | ConvertFrom-Json
+        $stats.mood | Should -Be 5
+        $stats.bodymood | Should -Be 9
+    }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+}

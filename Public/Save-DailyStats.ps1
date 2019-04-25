@@ -59,5 +59,15 @@ Function Save-DailyStats {
         $currentPath = Get-Location
         $JournalPath = $currentPath.Path
     }
-    
+
+    $stats = Get-Content "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json" | ConvertFrom-Json
+    $stats.mood = $Mood
+    $stats.bodymood = $BodyMood
+
+    $json = $stats | ConvertTo-Json
+    $params = @{
+        Path = "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json"
+        Value = $json
+    }
+    Set-Content @params
 }
