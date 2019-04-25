@@ -45,8 +45,8 @@ Describe "New-Day: File Creation" {
         $date = Get-Date
         $date = $date.ToString("yyyy-MM-dd")
         $path = Get-Location
-        "$($path.Path)\$date.md" | Should -Exist
-        Remove-Item -Path "$($path.Path)\$date.md"
+        "$($path.Path)\Entries\$date.md" | Should -Exist
+        Remove-Item -Path "$($path.Path)\Entries\$date.md"
     }
     It "Should create a file named yyyy-MM-dd-ThisIsATitle.md in the current directory" {
         $title = "This is a title"
@@ -56,9 +56,9 @@ Describe "New-Day: File Creation" {
         $path = Get-Location
         $strCulture = (Get-Culture).TextInfo
         $title = $strCulture.ToTitleCase($title)
-        $fullpath = "$($path.Path)\$date-$($title.Replace(' ', '')).md"
+        $fullpath = "$($path.Path)\Entries\$date-$($title.Replace(' ', '')).md"
         $fullpath | Should -Exist
-        Remove-Item -Path $fullpath
+        Remove-Item -Recurse -Force -Path ".\Entries"
     }
     It "Should create a file named yyyy-MM-dd.md in a specified directory" {
         New-Item -Path . -Name 'foo' -ItemType 'directory'
@@ -66,7 +66,7 @@ Describe "New-Day: File Creation" {
         $date = Get-Date
         $date = $date.ToString("yyyy-MM-dd")
         $path = Get-Location
-        $fullpath = "$($path.Path)\foo\$date.md"
+        $fullpath = "$($path.Path)\foo\Entries\$date.md"
         $fullpath | Should -Exist
         Remove-Item -Recurse -Force -Path ".\foo" 
     }
@@ -75,7 +75,7 @@ Describe "New-Day: File Creation" {
         New-Item -Path . -Name 'foo' -ItemType 'directory'
         New-Day -Date $date -JournalPath "./foo"
         $path = Get-Location
-        $fullPath = "$($path.Path)\foo\$date.md"
+        $fullPath = "$($path.Path)\foo\Entries\$date.md"
         $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
         Remove-Item -Recurse -Force -Path ".\foo" 
@@ -90,7 +90,7 @@ Describe "New-Day: File Creation" {
         $path = Get-Location
         $strCulture = (Get-Culture).TextInfo
         $title = $strCulture.ToTitleCase($title)
-        $fullPath = "$($path.Path)\foo\$date-$($title.Replace(' ', '')).md"
+        $fullPath = "$($path.Path)\foo\Entries\$date-$($title.Replace(' ', '')).md"
         $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
         Remove-Item -Recurse -Force -Path ".\foo" 

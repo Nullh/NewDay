@@ -54,18 +54,22 @@ Function New-Day {
         $JournalPath = $currentPath.Path
     }
 
-    #Write-Output $Date.ToString("yyyy-MM-dd")
+    $entriesFolder = Test-Path -Path "$JournalPath\Entries"
+
+    If(!$entriesFolder) {
+        New-Item -Path $JournalPath -Name "Entries" -ItemType "directory"
+    }
+
     If($Title) {
         $params = @{
-            Path = "$JournalPath\$($Date.ToString("yyyy-MM-dd"))-$($Title.Replace(' ', '')).md"
+            Path = "$JournalPath\Entries\$($Date.ToString("yyyy-MM-dd"))-$($Title.Replace(' ', '')).md"
             Value = "# $Title`n## $($Date.DayOfWeek) $($Date.ToString("yyyy-MM-dd"))"
         }
         Set-Content @params
     }
     Else {
-        New-Item -Path $JournalPath -Name "$($Date.ToString("yyyy-MM-dd")).md" -ItemType "file"
         $params = @{
-            Path = "$JournalPath\$($Date.ToString("yyyy-MM-dd")).md"
+            Path = "$JournalPath\Entries\$($Date.ToString("yyyy-MM-dd")).md"
             Value = "# $($Date.DayOfWeek) $($Date.ToString('D'))`n## $($Date.DayOfWeek) $($Date.ToString("yyyy-MM-dd"))"
         }
         Set-Content @params
