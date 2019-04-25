@@ -70,7 +70,19 @@ Describe "New-Day: File Creation" {
         $fullpath | Should -Exist
         Remove-Item -Recurse -Force -Path ".\foo" 
     }
-    It "Should set the file contents to match the format" {
+    It "Should set the file contents to match the format when no title specified" {
+        $date = "2010-01-01"
+        New-Item -Path . -Name 'foo' -ItemType 'directory'
+        New-Day -Date $date -JournalPath "./foo"
+        $path = Get-Location
+        $fullPath = "$($path.Path)\foo\$date.md"
+        $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
+        $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
+        Remove-Item -Recurse -Force -Path ".\foo" 
+        $firstLine | Should -Be "# $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('D'))"
+        $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
+    }
+    It "Should set the file contents to match the format when a title is specified" {
         $title = "This is a title"
         $date = "2010-01-01"
         New-Item -Path . -Name 'foo' -ItemType 'directory'
@@ -82,7 +94,7 @@ Describe "New-Day: File Creation" {
         $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
         Remove-Item -Recurse -Force -Path ".\foo" 
-        $firstLine | Should -Be "# $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('D'))"
+        $firstLine | Should -Be "# $title"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
     }
 }
