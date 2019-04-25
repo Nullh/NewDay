@@ -89,18 +89,6 @@ Function New-Day {
     # Build the json for the stats file then create it
     $food = @()
     $food += [pscustomobject]@{
-        meal = "breakfast";
-        items = @()
-    }
-    $food += [pscustomobject]@{
-        meal = "lunch";
-        items = @()
-    }
-    $food += [pscustomobject]@{
-        meal = "dinner";
-        items = @()
-    }
-    $food += [pscustomobject]@{
         meal = "snacks";
         items = @()
     }
