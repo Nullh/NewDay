@@ -136,3 +136,22 @@ Describe "New-Day: File Creation" {
     }
     Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
 }
+
+Describe "New-JournalEntry: Validation" {
+    It "Should expose a function called New-JournalEntry" {
+        $test = Get-Command -Module NewDay
+        $test.Name | Should -Contain "New-JournalEntry"
+    }
+    It "Should accept a parameter Title" {
+        (Get-Command New-JournalEntry).Parameters['Title'] | Should -Not -BeNullOrEmpty
+    }
+    It "Should accept a parameter Date" {
+        (Get-Command New-JournalEntry).Parameters['Date'] | Should -Not -BeNullOrEmpty
+    }
+    It "Should accept a parameter Content" {
+        (Get-Command New-JournalEntry).Parameters['Content'] | Should -Not -BeNullOrEmpty
+    }
+    It "Should accept a parameter JournalPath" {
+        (Get-Command New-JournalEntry).Parameters['JournalPath'] | Should -Not -BeNullOrEmpty
+    }
+}

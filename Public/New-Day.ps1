@@ -34,7 +34,7 @@ Function New-Day {
 
         [Parameter(
             Mandatory = $false,
-            Position = 1
+            Position = 2
         )]
         [string]
         $JournalPath
