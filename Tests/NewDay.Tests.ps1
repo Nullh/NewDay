@@ -41,13 +41,27 @@ Describe "New-Day: Validation" {
 }
 Describe "New-Day: File Creation" {
     It "Should create a file named yyyy-MM-dd.md in the current directory" {
+        $path = Get-Location
         New-Day
         $date = Get-Date
         $date = $date.ToString("yyyy-MM-dd")
-        $path = Get-Location
         "$($path.Path)\Entries\$date.md" | Should -Exist
-        Remove-Item -Path "$($path.Path)\Entries\$date.md"
     }
+
+    Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
+    Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+
+    It "Should create a Stats file in /Stats/yyyy-MM-dd.json" {
+        $path = Get-Location
+        New-Day
+        $date = Get-Date
+        $date = $date.ToString("yyyy-MM-dd")
+        "$($path.Path)\Stats\$date.json" | Should -Exist
+    }
+
+    Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
+    Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+
     It "Should create a file named yyyy-MM-dd-ThisIsATitle.md in the current directory" {
         $title = "This is a title"
         New-Day -Title $title
@@ -58,48 +72,58 @@ Describe "New-Day: File Creation" {
         $title = $strCulture.ToTitleCase($title)
         $fullpath = "$($path.Path)\Entries\$date-$($title.Replace(' ', '')).md"
         $fullpath | Should -Exist
-        Remove-Item -Recurse -Force -Path ".\Entries"
     }
+
+    Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
+    Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
     It "Should create a file named yyyy-MM-dd.md in a specified directory" {
-        New-Item -Path . -Name 'foo' -ItemType 'directory'
         New-Day -JournalPath "./foo"
         $date = Get-Date
         $date = $date.ToString("yyyy-MM-dd")
         $path = Get-Location
         $fullpath = "$($path.Path)\foo\Entries\$date.md"
         $fullpath | Should -Exist
-        Remove-Item -Recurse -Force -Path ".\foo" 
     }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
     It "Should set the file contents to match the format when no title specified" {
         $date = "2010-01-01"
-        New-Item -Path . -Name 'foo' -ItemType 'directory'
         New-Day -Date $date -JournalPath "./foo"
         $path = Get-Location
         $fullPath = "$($path.Path)\foo\Entries\$date.md"
         $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
-        Remove-Item -Recurse -Force -Path ".\foo" 
         $firstLine | Should -Be "# $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('D'))"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
     }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
     It "Should set the file contents to match the format when a title is specified" {
         $title = "This is a title"
         $date = "2010-01-01"
-        New-Item -Path . -Name 'foo' -ItemType 'directory'
-        New-Day -Title $title -Date $date -JournalPath "./foo"
+        New-Day -Title $title -Date $date -JournalPath ".\foo"
         $path = Get-Location
         $strCulture = (Get-Culture).TextInfo
         $title = $strCulture.ToTitleCase($title)
         $fullPath = "$($path.Path)\foo\Entries\$date-$($title.Replace(' ', '')).md"
         $firstLine = ((Get-Content -Path $fullPath) -Split '\n')[0]
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
-        Remove-Item -Recurse -Force -Path ".\foo" 
         $firstLine | Should -Be "# $title"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
     }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
     It "Should not create a new file if one already exists" {
-        New-Day -Title "Test" -Date "2010-01-01"
-        {New-Day -Date "2010-01-01"} | Should -Throw "Entry already exists for that day. Use New-DayEntry to add an additional entry."
-        Remove-Item -Recurse -Force -Path ".\Entries" 
+        New-Day -Title "Test" -Date "2010-01-01" -JournalPath ".\foo"
+        {New-Day -Date "2010-01-01" -JournalPath ".\foo"} | Should -Throw "Entry already exists for that day. Use New-DayEntry to add an additional entry."
     }
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
 }
