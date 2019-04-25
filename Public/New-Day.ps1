@@ -112,7 +112,7 @@ Function New-Day {
         Path = "$JournalPath\README.md"
         Value = @"
 # Journal Entries`n 
- $(foreach($entry in $entries){Write-Output "* $($entry.Name)`n"})
+ $(foreach($entry in $entries){Write-Output "* [$($entry.BaseName)](Entries/$($entry.Name))`n"})
 "@
     }
     Set-Content @params
