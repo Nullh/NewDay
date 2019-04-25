@@ -60,7 +60,15 @@ Function Save-DailyStats {
         $JournalPath = $currentPath.Path
     }
 
-    $stats = Get-Content "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json" | ConvertFrom-Json
+    # Get the stats file contents
+    $stats = Get-Content "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
+
+    # If the stats file does not exist, create a new entry for today
+    If(!$stats) {
+        New-Day -JournalPath $JournalPath -Date $Date
+        $stats = Get-Content "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json" | ConvertFrom-Json
+    }
+
     $stats.mood = $Mood
     $stats.bodymood = $BodyMood
 

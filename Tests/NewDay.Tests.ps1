@@ -219,4 +219,13 @@ Describe "Save-DailyStats: Functional Testing" {
     }
 
     Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
+    New-Item -Path . -Name 'foo' -ItemType 'directory'
+
+    It "Should create a new entry file if one does not exist" {
+        Save-DailyStats -Date "2010-01-01" -JournalPath ".\foo" -Mood 5 -BodyMood 9
+        Test-Path ".\foo\Entries\2010-01-01.md" | Should -Be $true
+        Test-Path ".\foo\Stats\2010-01-01.json" | Should -Be $true
+    }
+
+    Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
 }
