@@ -85,9 +85,35 @@ Function New-Day {
         }
         Set-Content @params
     }
+
+    # Build the json for the stats file then create it
+    $food = @()
+    $food += [pscustomobject]@{
+        meal = "breakfast";
+        items = @()
+    }
+    $food += [pscustomobject]@{
+        meal = "lunch";
+        items = @()
+    }
+    $food += [pscustomobject]@{
+        meal = "dinner";
+        items = @()
+    }
+    $food += [pscustomobject]@{
+        meal = "snacks";
+        items = @()
+    }
+    $stats = [pscustomobject]@{
+        date = $Date.ToString("yyyy-MM-dd");
+        mood = $null;
+        bodymood = $null;
+        food = $food;
+    } 
+    $json = $stats | ConvertTo-Json
     $params = @{
         Path = "$JournalPath\Stats\$($Date.ToString("yyyy-MM-dd")).json"
-        Value = "TEST"
+        Value = $json
     }
     Set-Content @params
     

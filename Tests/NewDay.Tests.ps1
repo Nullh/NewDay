@@ -40,6 +40,9 @@ Describe "New-Day: Validation" {
     #}
 }
 Describe "New-Day: File Creation" {
+    Remove-Item -Force -Recurse ".\Entries" -ErrorAction silentlycontinue
+    Remove-Item -Force -Recurse ".\Stats" -ErrorAction silentlycontinue
+
     It "Should create a file named yyyy-MM-dd.md in the current directory" {
         $path = Get-Location
         New-Day
@@ -99,6 +102,9 @@ Describe "New-Day: File Creation" {
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
         $firstLine | Should -Be "# $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('D'))"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
+        $stats = Get-Content "$($path.Path)\foo\Stats\$date.json" | ConvertFrom-Json
+        $stats.date | Should -Be $date
+        $stats.mood | Should -Be $null
     }
 
     Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
@@ -116,6 +122,9 @@ Describe "New-Day: File Creation" {
         $secondLine = ((Get-Content -Path $fullPath) -Split '\n')[1]
         $firstLine | Should -Be "# $title"
         $secondLine | Should -Be "## $(([datetime]$date).DayOfWeek) $(([datetime]$date).ToString('yyyy-MM-dd'))"   
+        $stats = Get-Content "$($path.Path)\foo\Stats\$date.json" | ConvertFrom-Json
+        $stats.date | Should -Be $date
+        $stats.mood | Should -Be $null
     }
 
     Remove-Item -Force -Recurse ".\foo" -ErrorAction silentlycontinue
